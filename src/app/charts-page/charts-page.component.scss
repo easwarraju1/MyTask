@@ -1,0 +1,19 @@
+.card_styling {
+    margin-top: 55px;
+    border-radius: 10px;
+    border-color: lightgoldenrodyellow;
+    border-width: 2px;
+    border-style: solid;
+}
+:host ::ng-deep .p-dialog-content{
+    height: 400px;
+}
+.graphs_styling {
+    display: flex; /* Makes the container a flex container */
+    justify-content: space-around; /* Distributes space between items */
+//   align-items: center; /* Aligns items vertically in the center */
+}
+:host ::ng-deep .del_dia .p-dialog-content {
+    height: auto;
+    justify-items: center;
+}
