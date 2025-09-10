@@ -17,3 +17,27 @@
     height: auto;
     justify-items: center;
 }
+:host ::ng-deep .p-card.first_card.p-card.p-component {
+    position: relative;
+    bottom: 5px;
+}
+:host ::ng-deep .p-datatable-table-container {
+    height: auto;
+    max-height: 500px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+.loading-bar {
+  background: rgba(255, 255, 255, 0.5);
+  position: absolute;
+  width: calc(100% - 258px);
+  height: 100%;
+  z-index: 989;
+  left: 258px;
+  top: 0;
+}
+
+.loading-bar-fullpage {
+  width: 100% !important;
+  left: 0 !important;
+}

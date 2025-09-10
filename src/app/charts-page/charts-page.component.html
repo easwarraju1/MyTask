@@ -1,25 +1,22 @@
 <div [style.filter]="'brightness('+ brightness +'%)'">
 
   <!-- // Common Code -->
-  <div>
-    <marquee direction="left" style="font-family: Rajdhani, sans-serif; color: #FFFFFF"
-      bgcolor="#00224f;position:sticky" scrolldelay="60" behavior="loop">Boundry Breakers (BB) : Vasantha Lakshmi,
+  <div style="position: sticky;top: 0;z-index: 999;">
+    <marquee direction="left" style="font-family: Rajdhani, sans-serif; color: #FFFFFF" bgcolor="#00224f"
+      scrolldelay="60" behavior="loop">Boundry Breakers (BB) : Vasantha Lakshmi,
       Kalyani Jaltare, Sirisha Guttula, Maha Lakshmi, Lokesh Babu, Babitha,
       Easwar</marquee>
-    <p-card>
+    <p-card styleClass="first_card">
       <span style="color: red;position: relative;float: left;"> Note : Please click on table data to change/edit/alter
         existing value/data.</span>
       <span *ngIf="first_page"><p-multiselect [options]="charts_list" [(ngModel)]="opted_charts" optionLabel="label"
           placeholder="Select Charts type" [selectionLimit]="5" class="w-full md:w-80"
           (onChange)="on_change_values($event)" /></span>
-      <span style="margin-left: 20px;">
-        <span *ngIf="!first_page" style="cursor: pointer;margin-right: 20px;" (click)="on_click('back')">
-          <i class="pi pi-backward" style="font-size: 1.5rem"></i>
-        </span>
-        <span *ngIf="first_page" style="cursor: pointer;margin-right: 10px;" (click)="on_click('next')">
-          <i class="pi pi-forward" style="font-size: 1.5rem"></i>
-        </span>
-      </span>
+      <span style="margin-left: 10px;" *ngIf="first_page"><p-button label="Upload File" severity="info" class="ms-8" [disabled]="uploaded_file"
+          (click)="fileInput.click()"></p-button>
+          <p-button label="Clear File" severity="secondary" class="ms-8" [disabled]="!uploaded_file"
+          (click)="on_click_clear_file()"></p-button>
+        <input type="file"  #attachment #fileInput (change)="onFileUpload($event)" accept=".xlsx" hidden /></span>
       <div style="cursor: pointer;position: relative;float: right;"> Choose Screen Background Color :
         <p-colorpicker [(ngModel)]="defalt_color" (onChange)="update_global_settings($event,'screen')" /><br>
         <span><i class="pi pi-sun" (click)="op.toggle($event)" style="cursor: pointer;position: relative;float: right;">
@@ -27,17 +24,23 @@
       </div>
     </p-card><br>
   </div>
+  <span style="position: sticky;top: 50%;float: right;">
+    <span *ngIf="!first_page" style="cursor: pointer;margin-right: 20px;" (click)="on_click('back')">
+      <i class="pi pi-backward" style="font-size: 1.5rem"></i>
+    </span>
+    <span *ngIf="first_page" style="cursor: pointer;margin-right: 10px;" (click)="on_click('next')">
+      <i class="pi pi-forward" style="font-size: 1.5rem"></i>
+    </span>
+  </span>
 
   <!-- // Code related to First Page -->
   <div class="card" *ngIf="first_page">
     <p-card>
       <ng-template #header>
-        <div style="color: red;padding-left: 30px;position: relative;top: 12px;">Select records to delete (Note: First two records are mandatory & Can not delateable)</div>
-        <div style="padding-left: 30px;position: relative;top: 12px;">Convert Table data to heat map => <p-checkbox [(ngModel)]="is_heatmap" [binary]="true" (onChange)="on_sel_heatmap_option($event)"/>
-        <span *ngIf="is_heatmap" style="margin-left: 10px;">Ranges => 1-30 : Green, 31-70 : Orange, >70 : Red </span>
-        </div>
+        <div style="color: red;padding-left: 30px;position: relative;top: 12px;">Select records to delete (Note: First
+          two records are mandatory & Can not delateable)</div>
       </ng-template>
-      <p-table [columns]="table_headers" [value]="table_data" [(selection)]="selected_records" dataKey="ds"
+      <p-table [columns]="uploaded_file ? cols : table_headers" [value]="uploaded_file ? data : table_data" [(selection)]="selected_records" dataKey="ds"
         [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template #header let-columns>
           <tr>
@@ -47,7 +50,6 @@
             } @empty {
             <th id="">There are no items.</th>
             }
-            <!-- <th id="" *ngFor="let col of columns">{{ col.label }}</th> -->
           </tr>
         </ng-template>
         <ng-template #body let-rowData let-columns="columns" let-index="rowIndex">
@@ -55,14 +57,14 @@
             <td>
               <i class="pi pi-lock" *ngIf="index < 2"></i>
               <p-tableCheckbox [value]="rowData" *ngIf="index > 1" style="cursor: pointer;" />
-              <!-- <i class="pi pi-trash" *ngIf="index > 1" style="cursor: pointer;"></i> -->
             </td>
             <td *ngFor="let col of columns" [pEditableColumn]="rowData[col.value]" style=""
-              pEditableColumnField="rowData[col.value]" [style.background-color]="is_heatmap ? ((col?.label == 'Year' || rowData[col.value] == 0 || rowData[col.value] == null) ? '' : (rowData[col.value] >= 0 && rowData[col.value] <=30) ? 'rgba(75, 192, 192, 0.7)' : (rowData[col.value] > 30 && rowData[col.value] <=70) ? 'rgba(255, 206, 86, 0.7)' : rowData[col.value] > 70 ? 'rgba(255, 99, 132, 0.7)' : '') : ''">
+              pEditableColumnField="rowData[col.value]"
+              [style.background-color]="is_heatmap ? ((col?.label == 'Year' || rowData[col.value] == 0 || rowData[col.value] == null) ? '' : (rowData[col.value] >= 0 && rowData[col.value] <=30) ? 'rgba(75, 192, 192, 0.7)' : (rowData[col.value] > 30 && rowData[col.value] <=70) ? 'rgba(255, 206, 86, 0.7)' : rowData[col.value] > 70 ? 'rgba(255, 99, 132, 0.7)' : '') : ''">
               <p-cellEditor>
                 <ng-template #input>
-                    <p-inputnumber inputId="integeronly" [(ngModel)]="rowData[col.value]" fluid
-                    (keyup)="someFunction($event,rowData)"/>
+                  <p-inputnumber inputId="integeronly" [(ngModel)]="rowData[col.value]" fluid
+                    (keyup)="someFunction($event,rowData)" />
                 </ng-template>
                 <ng-template #output>
                   <span>
@@ -75,15 +77,19 @@
         </ng-template>
       </p-table>
       <ng-template #footer>
-        <div style="float: right;margin-top: 10px;">
-          <span *ngIf="selected_records?.length > 0">
-            <p-button label="Delete Selected" (click)="add_new('del')" />
-          </span>
-          <span style="margin-left: 10px;">
-            <p-button label="Add Row" (click)="add_new('row')" />
-          </span>
-          <span style="margin-left: 10px;">
-            <p-button label="Add Column" (click)="add_new('column')" />
+        <div style="position: relative;top: 10px;">Convert Table data to colour-coded matrix! => <p-checkbox
+            [(ngModel)]="is_heatmap" [binary]="true" (onChange)="on_sel_heatmap_option($event)" />
+          <span *ngIf="is_heatmap" style="margin-left: 10px;">Ranges => 1-30 : Green, 31-70 : Orange, >70 : Red </span>
+          <span style="float: right;">
+            <span *ngIf="selected_records?.length > 0">
+              <p-button label="Delete Selected" (click)="add_new('del')" />
+            </span>
+            <span style="margin-left: 10px;">
+              <p-button label="Add Row" (click)="add_new('row')" />
+            </span>
+            <span style="margin-left: 10px;">
+              <p-button label="Add Column" (click)="add_new('column')" />
+            </span>
           </span>
         </div>
       </ng-template>
@@ -122,7 +128,7 @@
       <span style="display: block; width: 400px">
         <!-- *ngIf="opted_charts && opted_charts.length > 0 && opted_charts_list?.includes('stacked_bar')" -->
         <span>Stacked Bar Chart</span>
-        <p-chart type="bar" [data]="primeng_charts_data" style="margin-top: 20px;"
+        <p-chart type="bar" [data]="primeng_charts_data" style="margin-top: 20px;" height="400px" width="400px"
           [options]="{scales: {x: {stacked: true}, y: {stacked: true}}, indexAxis: 'x'}"></p-chart>
       </span>
       }
@@ -273,3 +279,10 @@
     </p-card>
   </div>
 </div>
+<div *ngIf="!loader; else showLoader"></div>
+<ng-template #showLoader>
+    <div class="loading-bar loading-bar-fullpage flex align-items-center justify-content-center">
+        <img src="/assets/Walk.gif" alt="" height="80">
+
+    </div>
+</ng-template>

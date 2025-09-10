@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
@@ -20,16 +20,18 @@ import { ToastModule } from 'primeng/toast';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { MessageService } from 'primeng/api';
 import { CheckboxModule } from 'primeng/checkbox';
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-charts-page',
   imports: [ButtonModule, TableModule, InputTextModule, CommonModule, FormsModule, ChartModule, CardModule, PopoverModule, SliderModule, MultiSelectModule, DialogModule, ColorPickerModule,
-    RadioButtonModule, NgxMarqueeModule,ToggleSwitchModule,ToastModule,InputNumberModule,CheckboxModule
+    RadioButtonModule, NgxMarqueeModule, ToggleSwitchModule, ToastModule, InputNumberModule, CheckboxModule
   ],
   templateUrl: './charts-page.component.html',
   styleUrl: './charts-page.component.scss',
   providers: [MessageService]
 })
 export class ChartsPageComponent {
+  @ViewChild('attachment') attachment: any;
   // first page variables
   chart: any;
   table_headers: any = [];
@@ -52,17 +54,19 @@ export class ChartsPageComponent {
     { label: 'X', value: 'x' },
     { label: 'Y', value: 'y' }
   ];
-  is_fill:boolean = false
+  is_fill: boolean = false
   selected_individual_chart: any;
   opted_charts_list: any = [];
   first_page: boolean = true;
   duplicate_table_data: any = [];
+  uploaded_file: boolean = false;
+  loader: boolean = false;
   constructor(private messageService: MessageService) { }
   brightness: any = [40, 120]
   defalt_color: any = '#dadced';
-  selected_records:any = []
-  show_conform_dialog:boolean = false
-  is_heatmap:boolean = false
+  selected_records: any = []
+  show_conform_dialog: boolean = false
+  is_heatmap: boolean = false
 
   //second page variables
   compareData_options: any = [
@@ -75,20 +79,23 @@ export class ChartsPageComponent {
     { label: 'Enbrel' },
     { label: 'Erelzi' },
   ]
-  countries_list :any = [
+  countries_list: any = [
     { label: 'France' },
     { label: 'Germany' },
     { label: 'Italy' },
-    { label: 'Spain'}
+    { label: 'Spain' }
   ]
 
   selected_options: any = [this.brands_list[0]];
   exper_charts_data: any = [];
-  
+
   second_table_headers: any = [];
   second_table_data: any = [];
 
   title = 'hackathon_prototype';
+
+  data: any[] = [];
+  cols: any[] = [];
   ngOnInit() {
     this.brightness = 100
     this.opted_charts = [this.charts_list[0]];
@@ -109,8 +116,8 @@ export class ChartsPageComponent {
       { label: 'Drug 6', value: 'jun' },
       { label: 'Drug 7', value: 'jul' },
     ];
-    if(sessionStorage.getItem('tab_data')) {
-      const data:any = sessionStorage.getItem('tab_data')
+    if (sessionStorage.getItem('tab_data')) {
+      const data: any = sessionStorage.getItem('tab_data')
       const existing_data = JSON.parse(data)
       this.table_data = existing_data
     } else {
@@ -130,7 +137,7 @@ export class ChartsPageComponent {
           label: '2000',
           chartjs_bg_color: 'green',
           chartjs_border_color: 'green',
-          fill:false,
+          fill: false,
           tension: 0.4,
         },
         {
@@ -181,7 +188,7 @@ export class ChartsPageComponent {
   }
 
   construct_chartsJS_charts_data(data?: any) {
-    console.log(data,this.opted_charts)
+    console.log(data, this.opted_charts)
     // let type: keyof ChartTypeRegistry = data == 2 ? 'line' : data == 3 ? 'radar' : 'bar';
     const datasets = this.table_data.map((product: any) => ({
       label: product.label,
@@ -191,7 +198,7 @@ export class ChartsPageComponent {
       borderWidth: 1,
       borderRadius: product?.border_radius//5,
     }));
-    if(!data) {
+    if (!data) {
       console.log('jkhdjhdjhjhj')
     }
     if (data) {
@@ -200,7 +207,7 @@ export class ChartsPageComponent {
       this.chart = new Chart(`${data}`, {
         // type: `${type}`,
         // type: this.opted_charts[data].value == 'stacked_bar' ? 'bar' :this.opted_charts[data].value ,
-        type:data == 'stacked_bar' ? 'bar' : data,
+        type: data == 'stacked_bar' ? 'bar' : data,
         data: {
           labels: this.table_headers.slice(1).map((header: any) => header?.label),
           datasets: datasets
@@ -231,7 +238,7 @@ export class ChartsPageComponent {
   someFunction(fun?: any, row_data?: any) {
     console.log('function called...', fun, row_data);
     console.log(this.table_data)
-    sessionStorage.setItem('tab_data',JSON.stringify(this.table_data))
+    sessionStorage.setItem('tab_data', JSON.stringify(this.table_data))
     this.construct_charts_data();
     // for (let i = 1; i <= this.table_data?.length; i++) {
     //   const chartInstance = Chart.getChart(`canvas${i}`);
@@ -244,14 +251,14 @@ export class ChartsPageComponent {
     // }
     if (this.opted_charts && this.opted_charts.length > 0) {
       for (let i = 1; i <= this.opted_charts.length; i++) {
-        const chartInstance = Chart.getChart(`${this.opted_charts[i-1]?.value}`);
+        const chartInstance = Chart.getChart(`${this.opted_charts[i - 1]?.value}`);
         if (chartInstance) {
           chartInstance.destroy();
         }
-        console.log(this.opted_charts[i-1]?.value)
+        console.log(this.opted_charts[i - 1]?.value)
         setTimeout(() => {
-          console.log(this.opted_charts[i-1]?.value)
-          this.construct_chartsJS_charts_data(this.opted_charts[i-1]?.value)
+          console.log(this.opted_charts[i - 1]?.value)
+          this.construct_chartsJS_charts_data(this.opted_charts[i - 1]?.value)
         }, 10);
       }
     }
@@ -282,15 +289,45 @@ export class ChartsPageComponent {
           chartjs_bg_color: '',
           chartjs_border_color: '',
         }]
+        this.calculate_average()
         break;
-      case 'del' :
+      case 'del':
         this.duplicate_table_data = this.table_data
         this.show_conform_dialog = true
-        break;  
+        break;
       default:
         break;
     }
     console.log(this.table_headers, this.table_data);
+  }
+
+  calculate_average() {
+    const tableDataKeys = Object.keys(this.table_data[0]);
+    const tableheaderKeys = this.table_headers?.map((x: any) => x.value);
+    console.log(tableDataKeys, tableheaderKeys)
+    const total_counts_obj: any = {}
+    this.table_data?.forEach((ele: any, i: any) => {
+      console.log(i, ele)
+      if (i < this.table_data?.length) {
+        this.table_headers?.forEach((hdr: any, j: any) => {
+          if (j > 0) {
+            console.log(j, hdr?.value, tableDataKeys?.includes(hdr?.value))
+            if (tableDataKeys?.includes(hdr?.value)) {
+              console.log('hit here', this.table_data[this.table_data?.length - 1])
+            }
+          }
+        });
+      }
+    });
+
+
+    // for (const product of this.table_data) {
+    //   console.log(product)
+
+    //   // totalPrice += product.price;
+    //   // totalQuantity += product.quantity;
+    // }
+
   }
 
   on_change_values(evnt?: any) {
@@ -300,14 +337,14 @@ export class ChartsPageComponent {
     this.construct_charts_data();
     if (this.opted_charts && this.opted_charts.length > 0) {
       for (let i = 1; i <= this.opted_charts.length; i++) {
-        const chartInstance = Chart.getChart(`${this.opted_charts[i-1]?.value}`);
+        const chartInstance = Chart.getChart(`${this.opted_charts[i - 1]?.value}`);
         if (chartInstance) {
           chartInstance.destroy();
         }
-        console.log(this.opted_charts[i-1]?.value)
+        console.log(this.opted_charts[i - 1]?.value)
         setTimeout(() => {
-          console.log(this.opted_charts[i-1]?.value)
-          this.construct_chartsJS_charts_data(this.opted_charts[i-1]?.value)
+          console.log(this.opted_charts[i - 1]?.value)
+          this.construct_chartsJS_charts_data(this.opted_charts[i - 1]?.value)
           // this.construct_charts_data(this.opted_charts[i-1]);
         }, 10);
       }
@@ -344,21 +381,21 @@ export class ChartsPageComponent {
       //   chart.border_color = evnt?.value
       // }
 
-        chart.bg_color = evnt?.value
-        chart.border_color = evnt?.value
+      chart.bg_color = evnt?.value
+      chart.border_color = evnt?.value
 
       this.table_data = [...this.table_data]
       this.construct_charts_data();
     }
   }
 
-  update_indiv_settings(evnt?: any, data?: any, from?:any) {
+  update_indiv_settings(evnt?: any, data?: any, from?: any) {
     console.log(evnt, data)
-    if(from == 'border_radius') {
+    if (from == 'border_radius') {
       data.border_radius = evnt?.value
-    }  else if(from == 'fill') {
+    } else if (from == 'fill') {
       data.fill = evnt?.checked
-    }else {
+    } else {
       data.border_width = evnt?.value
     }
     this.table_data = [...this.table_data]
@@ -383,7 +420,20 @@ export class ChartsPageComponent {
       this.first_page = true
       setTimeout(() => {
         this.construct_charts_data();
-        this.construct_chartsJS_charts_data('bar');
+        if (this.opted_charts && this.opted_charts.length > 0) {
+          for (let i = 1; i <= this.opted_charts.length; i++) {
+            const chartInstance = Chart.getChart(`${this.opted_charts[i - 1]?.value}`);
+            if (chartInstance) {
+              chartInstance.destroy();
+            }
+            console.log(this.opted_charts[i - 1]?.value)
+            setTimeout(() => {
+              console.log(this.opted_charts[i - 1]?.value)
+              this.construct_chartsJS_charts_data(this.opted_charts[i - 1]?.value)
+            }, 10);
+          }
+        }
+        // this.construct_chartsJS_charts_data();
       }, 500);
     } else {
       this.first_page = false
@@ -391,8 +441,8 @@ export class ChartsPageComponent {
     }
   }
 
-  generate_comparasion_charts(opted?:any,index?:any) {
-    console.log('hittoing her',opted,index,this.opted_option)
+  generate_comparasion_charts(opted?: any, index?: any) {
+    console.log('hittoing her', opted, index, this.opted_option)
     this.second_table_headers = [
       { label: '2000', value: '2000' },
       { label: '2001', value: '2001' },
@@ -402,7 +452,7 @@ export class ChartsPageComponent {
     ];
     this.second_table_data = [
       {
-        countries_data : [{
+        countries_data: [{
           ds: '1',
           2000: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '14' : '2',
           2001: opted?.label == 'Enbrel' ? '5' : opted?.label == 'Benepali' ? '13' : '59',
@@ -450,7 +500,7 @@ export class ChartsPageComponent {
           border_radius: 10,
           label: 'Spain',
         }],
-        brands_data:[
+        brands_data: [
           {
             ds: '1',
             2000: opted?.label == 'France' ? '65' : opted?.label == 'Germany' ? '14' : opted?.label == 'Italy' ? '45' : '2',
@@ -505,11 +555,13 @@ export class ChartsPageComponent {
       // tension: 0.1,
 
     }));
-    if(opted?.label) {
-      const obj:any = {
-        brand:opted?.label,
-        data_bind : {labels: labels,
-          datasets: datasets}
+    if (opted?.label) {
+      const obj: any = {
+        brand: opted?.label,
+        data_bind: {
+          labels: labels,
+          datasets: datasets
+        }
       }
       this.exper_charts_data?.push(obj);
       this.exper_charts_data = [...new Set(this.exper_charts_data)]
@@ -520,15 +572,15 @@ export class ChartsPageComponent {
   on_change_brandss(evnt?: any) {
     console.log(evnt)
     this.exper_charts_data = []
-    evnt?.value.forEach((element:any, i:any) => {
-      this.generate_comparasion_charts(element,i)
+    evnt?.value.forEach((element: any, i: any) => {
+      this.generate_comparasion_charts(element, i)
     });
   }
 
-  on_click_radio_button(evnt?:any) {
-    console.log(evnt, this.opted_option )
+  on_click_radio_button(evnt?: any) {
+    console.log(evnt, this.opted_option)
     this.exper_charts_data = []
-    if(this.opted_option?.label == 'By Country') {
+    if (this.opted_option?.label == 'By Country') {
       this.selected_options = [this.countries_list[0]];
       console.log(this.selected_options)
     } else {
@@ -538,12 +590,12 @@ export class ChartsPageComponent {
 
   }
 
-  confirm_del(evnt?:any) {
-    console.log('sscscscs',evnt,this.table_data,this.selected_records)
-    console.log(this.selected_records?.map((x:any)=>x.ds))
-    if(evnt == 'delete') {  
+  confirm_del(evnt?: any) {
+    console.log('sscscscs', evnt, this.table_data, this.selected_records)
+    console.log(this.selected_records?.map((x: any) => x.ds))
+    if (evnt == 'delete') {
       // const updatedArray = this.table_data.filter((obj:any) => !this.selected_records?.map((x:any)=>x.ds).includes(obj.ds));
-      this.table_data = this.table_data.filter((obj:any) => !this.selected_records?.map((x:any)=>x.ds).includes(obj.ds));
+      this.table_data = this.table_data.filter((obj: any) => !this.selected_records?.map((x: any) => x.ds).includes(obj.ds));
       console.log(this.table_data)
       this.show_conform_dialog = false
       this.selected_records = []
@@ -551,13 +603,79 @@ export class ChartsPageComponent {
       this.selected_records = []
       this.show_conform_dialog = false
     }
-    sessionStorage.setItem('tab_data',JSON.stringify(this.table_data))
+    sessionStorage.setItem('tab_data', JSON.stringify(this.table_data))
     this.on_change_values()
     // this.messageService.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted' });
 
   }
 
-  on_sel_heatmap_option(evnt?:any) {
+  on_sel_heatmap_option(evnt?: any) {
     console.log(this.is_heatmap, evnt)
+  }
+
+  onFileUpload(evnt?: any) {
+    this.loader = true
+    this.uploaded_file = true
+    console.log('checkingupload ecel;', evnt.target.files[0])
+    const file = evnt.target.files[0];
+    const reader: FileReader = new FileReader();
+
+    reader.readAsArrayBuffer(file);
+    reader.onload = (e: any) => {
+      this.loader = true
+      const arrayBuffer: ArrayBuffer = e.target.result;
+      const binaryString = new Uint8Array(arrayBuffer).reduce((data, byte) => data + String.fromCharCode(byte), '');
+      const wb: XLSX.WorkBook = XLSX.read(binaryString, { type: 'binary' });
+      const wsname: string = wb.SheetNames[0]; // take first sheet
+      const ws: XLSX.WorkSheet = wb.Sheets[wsname];
+
+      // Convert sheet to JSON
+      const sheetData = XLSX.utils.sheet_to_json(ws, { header: 1 });
+      
+      // Extract headers
+      this.cols = (sheetData[0] as string[]).map((h: string) => ({ value: h, label: h }));
+
+      // Extract rows
+      this.data = sheetData.slice(1).map((row: any) => {
+        this.loader = true
+        const obj: any = {};
+        this.cols.forEach((col, index) => {
+          obj[col.value] = row[index];
+        });
+        return obj;
+      });
+      this.loader = false
+    };
+    setTimeout(() => {
+      console.log(this.cols,this.data)
+      this.loader = false
+      // this.construct_charts_with_excel_data()
+    }, 3000);
+  }
+  on_click_clear_file() {
+    this.uploaded_file = false
+    this.attachment.nativeElement.value = '';
+  }
+
+  construct_charts_with_excel_data() {
+    console.log('constructing chart data...', this.cols, this.data);
+    // const labels = this.cols.slice(1).map((header: any) => header?.label);
+    const labels = this.cols.filter((x:any)=>x.label !='Brand' && x.label !== 'Country').map((header: any) => header?.label);
+    const datasets = this.data.map((product: any) => ({
+      label: product.Country,
+      // backgroundColor: product?.fill === true ? 'rgba(107, 114, 128, 0.2)' : product?.bg_color,//getComputedStyle(document.documentElement).getPropertyValue('var(--p-cyan-100)'),
+      // borderColor: product.border_color,//getComputedStyle(document.documentElement).getPropertyValue(product.border_color),
+      data: this.cols.filter((x:any)=>x.label !='Brand' && x.label !== 'Country').map((header: any) => product[header.value]),
+      borderWidth: 1,//product?.border_width,//1,
+      borderRadius: 3,//product?.border_radius, //5,
+      fill: false,
+      // borderDash: [10, 10], 
+      tension: 0.1,
+    }));
+    this.primeng_charts_data = {
+      labels: labels,
+      datasets: datasets
+    };
+    console.log(this.primeng_charts_data);
   }
 }
