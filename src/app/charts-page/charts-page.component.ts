@@ -108,13 +108,13 @@ export class ChartsPageComponent {
 
     this.table_headers = [
       { label: 'Year', value: 'label' },
-      { label: 'Drug 1', value: 'jan' },
-      { label: 'Drug 2', value: 'feb' },
-      { label: 'Drug 3', value: 'mar' },
-      { label: 'Drug 4', value: 'apr' },
-      { label: 'Drug 5', value: 'may' },
-      { label: 'Drug 6', value: 'jun' },
-      { label: 'Drug 7', value: 'jul' },
+      { label: 'Lyrica', value: 'jan' },
+      { label: 'Cymbalta', value: 'feb' },
+      { label: 'Lexapro', value: 'mar' },
+      { label: 'Duloxetine lilly', value: 'apr' },
+      { label: 'Pregabalin Pfizer', value: 'may' },
+      // { label: 'Drug 6', value: 'jun' },
+      // { label: 'Drug 7', value: 'jul' },
     ];
     if (sessionStorage.getItem('tab_data')) {
       const data: any = sessionStorage.getItem('tab_data')
@@ -131,10 +131,10 @@ export class ChartsPageComponent {
           may: '56',
           jun: '55',
           jul: '40',
-          bg_color: 'cyan',//'var(--p-cyan-100)',
-          border_color: 'cyan',//'var(--p-cyan-100)',
+          bg_color: 'skyblue',//'var(--p-cyan-100)',
+          border_color: 'skyblue',//'var(--p-cyan-100)',
           border_radius: 5,
-          label: '2000',
+          label: 'Germany',
           chartjs_bg_color: 'green',
           chartjs_border_color: 'green',
           fill: false,
@@ -152,9 +152,27 @@ export class ChartsPageComponent {
           bg_color: 'orange',//'var(--p-orange-100)',
           border_color: 'orange',//'var(--p-orange-100)',
           border_radius: 10,
-          label: '2001',
+          label: 'Spain',
+          fill: false,
           chartjs_bg_color: 'yellow',
           chartjs_border_color: 'yellow',
+        },
+        {
+          ds: 2,
+          jan: '8',
+          feb: '88',
+          mar: '20',
+          apr: '39',
+          may: '56',
+          jun: '67',
+          jul: '9',
+          bg_color: 'yellow',//'var(--p-orange-100)',
+          border_color: 'yellow',//'var(--p-orange-100)',
+          border_radius: 10,
+          label: 'France',
+          fill: false,
+          chartjs_bg_color: 'orange',
+          chartjs_border_color: 'orange',
         }
       ];
     }
@@ -167,16 +185,16 @@ export class ChartsPageComponent {
   }
 
   construct_charts_data(chart_type?: any) {
-    console.log('constructing chart data...', this.table_headers, this.table_data);
+    console.log('constructing chart data...', this.table_headers, this.table_data, this.opted_charts,this.opted_charts_list);
     const labels = this.table_headers.slice(1).map((header: any) => header?.label);
     const datasets = this.table_data.map((product: any) => ({
       label: product.label,
-      backgroundColor: product?.fill === true ? 'rgba(107, 114, 128, 0.2)' : product?.bg_color,//getComputedStyle(document.documentElement).getPropertyValue('var(--p-cyan-100)'),
+      backgroundColor: product?.fill === true && (this.opted_charts_list?.includes('line') ||this.opted_charts_list?.includes('radar')) ? 'rgba(107, 114, 128, 0.2)' : product?.bg_color,//getComputedStyle(document.documentElement).getPropertyValue('var(--p-cyan-100)'),
       borderColor: product.border_color,//getComputedStyle(document.documentElement).getPropertyValue(product.border_color),
       data: this.table_headers.slice(1).map((header: any) => product[header.value]),
       borderWidth: product?.border_width,//1,
       borderRadius: product?.border_radius, //5,
-      fill: product?.fill,
+      fill: this.opted_charts_list?.includes('line') ||this.opted_charts_list?.includes('radar')?product?.fill : '',
       // borderDash: [10, 10], 
       tension: 0.1,
     }));
@@ -444,21 +462,21 @@ export class ChartsPageComponent {
   generate_comparasion_charts(opted?: any, index?: any) {
     console.log('hittoing her', opted, index, this.opted_option)
     this.second_table_headers = [
-      { label: '2000', value: '2000' },
-      { label: '2001', value: '2001' },
-      { label: '2002', value: '2002' },
-      { label: '2003', value: '2003' },
-      { label: '2004', value: '2004' },
+      { label: '2010', value: '2010' },
+      { label: '2015', value: '2015' },
+      { label: '2020', value: '2020' },
+      { label: '2025', value: '2025' },
+      // { label: '2004', value: '2004' },
     ];
     this.second_table_data = [
       {
         countries_data: [{
           ds: '1',
-          2000: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '14' : '2',
-          2001: opted?.label == 'Enbrel' ? '5' : opted?.label == 'Benepali' ? '13' : '59',
-          2002: opted?.label == 'Enbrel' ? '4' : opted?.label == 'Benepali' ? '12' : '80',
-          2003: opted?.label == 'Enbrel' ? '3' : opted?.label == 'Benepali' ? '11' : '81',
-          2004: opted?.label == 'Enbrel' ? '2' : opted?.label == 'Benepali' ? '10' : '56',
+          2010: opted?.label == 'Enbrel' ? '1008' : opted?.label == 'Benepali' ? '0' : '0',
+          2015: opted?.label == 'Enbrel' ? '718' : opted?.label == 'Benepali' ? '0' : '0',
+          2020: opted?.label == 'Enbrel' ? '549' : opted?.label == 'Benepali' ? '481' : '481',
+          2025: opted?.label == 'Enbrel' ? '412' : opted?.label == 'Benepali' ? '411' : '412',
+          // 2004: opted?.label == 'Enbrel' ? '2' : opted?.label == 'Benepali' ? '10' : '56',
           bg_color: 'orange',//'var(--p-cyan-100)',
           border_color: 'orange',//'var(--p-cyan-100)',
           border_radius: 5,
@@ -466,11 +484,11 @@ export class ChartsPageComponent {
         },
         {
           ds: '2',
-          2000: opted?.label == 'Enbrel' ? '3' : opted?.label == 'Benepali' ? '58' : '28',
-          2001: opted?.label == 'Enbrel' ? '2' : opted?.label == 'Benepali' ? '24' : '48',
-          2002: opted?.label == 'Enbrel' ? '4' : opted?.label == 'Benepali' ? '14' : '40',
-          2003: opted?.label == 'Enbrel' ? '6' : opted?.label == 'Benepali' ? '34' : '19',
-          2004: opted?.label == 'Enbrel' ? '5' : opted?.label == 'Benepali' ? '44' : '86',
+          2010: opted?.label == 'Enbrel' ? '1407' : opted?.label == 'Benepali' ? '0' : '0',
+          2015: opted?.label == 'Enbrel' ? '1407' : opted?.label == 'Benepali' ? '0' : '0',
+          2020: opted?.label == 'Enbrel' ? '1120' : opted?.label == 'Benepali' ? '894' : '774',
+          2025: opted?.label == 'Enbrel' ? '732' : opted?.label == 'Benepali' ? '732' : '725',
+          // 2004: opted?.label == 'Enbrel' ? '5' : opted?.label == 'Benepali' ? '44' : '86',
           bg_color: 'blue',//'var(--p-orange-100)',
           border_color: 'blue',//'var(--p-orange-100)',
           border_radius: 10,
@@ -478,11 +496,11 @@ export class ChartsPageComponent {
         },
         {
           ds: '2',
-          2000: opted?.label == 'Enbrel' ? '75' : opted?.label == 'Benepali' ? '5' : '81',
-          2001: opted?.label == 'Enbrel' ? '52' : opted?.label == 'Benepali' ? '4' : '47',
-          2002: opted?.label == 'Enbrel' ? '89' : opted?.label == 'Benepali' ? '2' : '55',
-          2003: opted?.label == 'Enbrel' ? '74' : opted?.label == 'Benepali' ? '3' : '36',
-          2004: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '1' : '47',
+          2010: opted?.label == 'Enbrel' ? '1020' : opted?.label == 'Benepali' ? '0' : '0',
+          2015: opted?.label == 'Enbrel' ? '1020' : opted?.label == 'Benepali' ? '0' : '0',
+          2020: opted?.label == 'Enbrel' ? '1020' : opted?.label == 'Benepali' ? '696' : '663',
+          2025: opted?.label == 'Enbrel' ? '1020' : opted?.label == 'Benepali' ? '696' : '663',
+          // 2004: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '1' : '47',
           bg_color: 'green',//'var(--p-orange-100)',
           border_color: 'green',//'var(--p-orange-100)',
           border_radius: 10,
@@ -490,11 +508,11 @@ export class ChartsPageComponent {
         },
         {
           ds: '2',
-          2000: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '1' : '77',
-          2001: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '1' : '65',
-          2002: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '1' : '4',
-          2003: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '1' : '85',
-          2004: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '1' : '12',
+          2010: opted?.label == 'Enbrel' ? '947' : opted?.label == 'Benepali' ? '0' : '0',
+          2015: opted?.label == 'Enbrel' ? '756' : opted?.label == 'Benepali' ? '0' : '0',
+          2020: opted?.label == 'Enbrel' ? '676' : opted?.label == 'Benepali' ? '760' : '676',
+          2025: opted?.label == 'Enbrel' ? '676' : opted?.label == 'Benepali' ? '760' :'676',
+          // 2004: opted?.label == 'Enbrel' ? '65' : opted?.label == 'Benepali' ? '1' : '12',
           bg_color: 'yellow',//'var(--p-orange-100)',
           border_color: 'yellow',//'var(--p-orange-100)',
           border_radius: 10,
@@ -503,23 +521,23 @@ export class ChartsPageComponent {
         brands_data: [
           {
             ds: '1',
-            2000: opted?.label == 'France' ? '65' : opted?.label == 'Germany' ? '14' : opted?.label == 'Italy' ? '45' : '2',
-            2001: opted?.label == 'France' ? '5' : opted?.label == 'Germany' ? '13' : opted?.label == 'Italy' ? '41' : '59',
-            2002: opted?.label == 'France' ? '4' : opted?.label == 'Germany' ? '12' : opted?.label == 'Italy' ? '77' : '80',
-            2003: opted?.label == 'France' ? '3' : opted?.label == 'Germany' ? '11' : opted?.label == 'Italy' ? '36' : '81',
-            2004: opted?.label == 'France' ? '2' : opted?.label == 'Germany' ? '10' : opted?.label == 'Italy' ? '47' : '56',
+            2010: opted?.label == 'France' ? '0' : opted?.label == 'Germany' ? '0' : opted?.label == 'Italy' ? '0' : '0',
+            2015: opted?.label == 'France' ? '0' : opted?.label == 'Germany' ? '0' : opted?.label == 'Italy' ? '0' : '0',
+            2020: opted?.label == 'France' ? '481' : opted?.label == 'Germany' ? '894' : opted?.label == 'Italy' ? '696' : '760',
+            2025: opted?.label == 'France' ? '411' : opted?.label == 'Germany' ? '732' : opted?.label == 'Italy' ? '696' : '760',
+            // 2004: opted?.label == 'France' ? '2' : opted?.label == 'Germany' ? '10' : opted?.label == 'Italy' ? '47' : '56',
             bg_color: 'orange',//'var(--p-cyan-100)',
             border_color: 'orange',//'var(--p-cyan-100)',
             border_radius: 5,
-            label: 'Benelapi',
+            label: 'Benepali',
           },
           {
             ds: '2',
-            2000: opted?.label == 'France' ? '3' : opted?.label == 'Germany' ? '58' : opted?.label == 'Italy' ? '65' : '28',
-            2001: opted?.label == 'France' ? '2' : opted?.label == 'Germany' ? '24' : opted?.label == 'Italy' ? '47' : '48',
-            2002: opted?.label == 'France' ? '4' : opted?.label == 'Germany' ? '14' : opted?.label == 'Italy' ? '69' : '40',
-            2003: opted?.label == 'France' ? '6' : opted?.label == 'Germany' ? '34' : opted?.label == 'Italy' ? '77' : '19',
-            2004: opted?.label == 'France' ? '5' : opted?.label == 'Germany' ? '44' : opted?.label == 'Italy' ? '89' : '86',
+            2010: opted?.label == 'France' ? '1008' : opted?.label == 'Germany' ? '1407' : opted?.label == 'Italy' ? '1020' : '947',
+            2015: opted?.label == 'France' ? '718' : opted?.label == 'Germany' ? '1407' : opted?.label == 'Italy' ? '1020' : '756',
+            2020: opted?.label == 'France' ? '549' : opted?.label == 'Germany' ? '1120' : opted?.label == 'Italy' ? '1020' : '676',
+            2025: opted?.label == 'France' ? '412' : opted?.label == 'Germany' ? '732' : opted?.label == 'Italy' ? '1020' : '676',
+            // 2004: opted?.label == 'France' ? '5' : opted?.label == 'Germany' ? '44' : opted?.label == 'Italy' ? '89' : '86',
             bg_color: 'blue',//'var(--p-orange-100)',
             border_color: 'blue',//'var(--p-orange-100)',
             border_radius: 10,
@@ -527,11 +545,11 @@ export class ChartsPageComponent {
           },
           {
             ds: '2',
-            2000: opted?.label == 'France' ? '4' : opted?.label == 'Germany' ? '5' : opted?.label == 'Italy' ? '22' : '81',
-            2001: opted?.label == 'France' ? '2' : opted?.label == 'Germany' ? '4' : opted?.label == 'Italy' ? '56' : '47',
-            2002: opted?.label == 'France' ? '89' : opted?.label == 'Germany' ? '2' : opted?.label == 'Italy' ? '74' : '55',
-            2003: opted?.label == 'France' ? '74' : opted?.label == 'Germany' ? '3' : opted?.label == 'Italy' ? '69' : '36',
-            2004: opted?.label == 'France' ? '65' : opted?.label == 'Germany' ? '1' : opted?.label == 'Italy' ? '63' : '47',
+            2010: opted?.label == 'France' ? '0' : opted?.label == 'Germany' ? '0' : opted?.label == 'Italy' ? '0' : '0',
+            2015: opted?.label == 'France' ? '0' : opted?.label == 'Germany' ? '0' : opted?.label == 'Italy' ? '0' : '0',
+            2020: opted?.label == 'France' ? '481' : opted?.label == 'Germany' ? '774' : opted?.label == 'Italy' ? '663' : '676',
+            2025: opted?.label == 'France' ? '412' : opted?.label == 'Germany' ? '725' : opted?.label == 'Italy' ? '663' : '676',
+            // 2004: opted?.label == 'France' ? '65' : opted?.label == 'Germany' ? '1' : opted?.label == 'Italy' ? '63' : '47',
             bg_color: 'green',//'var(--p-orange-100)',
             border_color: 'green',//'var(--p-orange-100)',
             border_radius: 10,
@@ -542,6 +560,7 @@ export class ChartsPageComponent {
     ];
     console.log(this.second_table_data, this.second_table_headers)
     let data_to_loop = this.opted_option?.label == 'By Country' ? this.second_table_data[0]?.brands_data : this.second_table_data[0]?.countries_data
+    console.log(data_to_loop)
     const labels = this.second_table_headers.map((header: any) => header?.label);
     const datasets = data_to_loop.map((product: any) => ({
       label: product.label,

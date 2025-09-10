@@ -3,45 +3,55 @@
   <!-- // Common Code -->
   <div style="position: sticky;top: 0;z-index: 999;">
     <marquee direction="left" style="font-family: Rajdhani, sans-serif; color: #FFFFFF" bgcolor="#00224f"
-      scrolldelay="60" behavior="loop">Boundry Breakers (BB) : Vasantha Lakshmi,
-      Kalyani Jaltare, Sirisha Guttula, Maha Lakshmi, Lokesh Babu, Babitha,
+      scrolldelay="60" behavior="loop">Boundary Breakers (BB) : Lokesh Babu, Vasanta Lakshmi,
+      Kalyani Jaltare, Sirisha Guttula, Maha Lakshmi, Babitha,
       Easwar</marquee>
     <p-card styleClass="first_card">
-      <span style="color: red;position: relative;float: left;"> Note : Please click on table data to change/edit/alter
-        existing value/data.</span>
-      <span *ngIf="first_page"><p-multiselect [options]="charts_list" [(ngModel)]="opted_charts" optionLabel="label"
-          placeholder="Select Charts type" [selectionLimit]="5" class="w-full md:w-80"
-          (onChange)="on_change_values($event)" /></span>
-      <span style="margin-left: 10px;" *ngIf="first_page"><p-button label="Upload File" severity="info" class="ms-8" [disabled]="uploaded_file"
-          (click)="fileInput.click()"></p-button>
-          <p-button label="Clear File" severity="secondary" class="ms-8" [disabled]="!uploaded_file"
-          (click)="on_click_clear_file()"></p-button>
-        <input type="file"  #attachment #fileInput (change)="onFileUpload($event)" accept=".xlsx" hidden /></span>
-      <div style="cursor: pointer;position: relative;float: right;"> Choose Screen Background Color :
-        <p-colorpicker [(ngModel)]="defalt_color" (onChange)="update_global_settings($event,'screen')" /><br>
-        <span><i class="pi pi-sun" (click)="op.toggle($event)" style="cursor: pointer;position: relative;float: right;">
-            Adjust Brightness</i></span>
+      <div class="card-container">
+        <div class="first-page-sec">
+          <div class="note" *ngIf="first_page"> Note : Please click on table data to change/edit/alter
+            existing value/data.</div>
+          <div class="note" *ngIf="!first_page"> Note : In future you can expect similar table as it is in First page.
+          </div>
+          <div *ngIf="first_page"><p-multiselect [options]="charts_list" [(ngModel)]="opted_charts" optionLabel="label"
+              placeholder="Select Charts type" [selectionLimit]="5" class="w-full md:w-80"
+              (onChange)="on_change_values($event)" /></div>
+          <div style="margin-left: 10px;" *ngIf="first_page"><p-button label="Upload File" severity="info" class="ms-8"
+              [disabled]="uploaded_file" (click)="fileInput.click()"></p-button>
+            <p-button label="Clear File" severity="secondary" class="ms-8" [disabled]="!uploaded_file"
+              (click)="on_click_clear_file()"></p-button>
+            <input type="file" #attachment #fileInput (change)="onFileUpload($event)" accept=".xlsx" hidden />
+          </div>
+        </div>
+
+        <div style="cursor: pointer;position: relative;float: right;"> Choose Screen Background Color :
+          <p-colorpicker [(ngModel)]="defalt_color" (onChange)="update_global_settings($event,'screen')" /><br>
+          <div><i class="pi pi-sun" (click)="op.toggle($event)"
+              style="cursor: pointer;position: relative;float: right;">
+              Adjust Brightness</i></div>
+        </div>
       </div>
-    </p-card><br>
+    </p-card>
   </div>
-  <span style="position: sticky;top: 50%;float: right;">
-    <span *ngIf="!first_page" style="cursor: pointer;margin-right: 20px;" (click)="on_click('back')">
+  <div style="position: sticky;top: 40%;float: right;">
+    <div *ngIf="!first_page" (click)="on_click('back')">
       <i class="pi pi-backward" style="font-size: 1.5rem"></i>
-    </span>
-    <span *ngIf="first_page" style="cursor: pointer;margin-right: 10px;" (click)="on_click('next')">
+    </div>
+    <div *ngIf="first_page border-box" (click)="on_click('next')">
       <i class="pi pi-forward" style="font-size: 1.5rem"></i>
-    </span>
-  </span>
+    </div>
+  </div>
 
   <!-- // Code related to First Page -->
   <div class="card" *ngIf="first_page">
     <p-card>
       <ng-template #header>
-        <div style="color: red;padding-left: 30px;position: relative;top: 12px;">Select records to delete (Note: First
-          two records are mandatory & Can not delateable)</div>
+        <div class="select-record">
+          <p>Select records to delete (Note: First three records are mandatory & Can't be deleted)</p>
+        </div>
       </ng-template>
-      <p-table [columns]="uploaded_file ? cols : table_headers" [value]="uploaded_file ? data : table_data" [(selection)]="selected_records" dataKey="ds"
-        [tableStyle]="{ 'min-width': '50rem' }">
+      <p-table [columns]="uploaded_file ? cols : table_headers" [value]="uploaded_file ? data : table_data"
+        [(selection)]="selected_records" dataKey="ds" [tableStyle]="{ 'min-width': '50rem' }">
         <ng-template #header let-columns>
           <tr>
             <th style="width: 4rem">#</th>
@@ -55,8 +65,8 @@
         <ng-template #body let-rowData let-columns="columns" let-index="rowIndex">
           <tr>
             <td>
-              <i class="pi pi-lock" *ngIf="index < 2"></i>
-              <p-tableCheckbox [value]="rowData" *ngIf="index > 1" style="cursor: pointer;" />
+              <i class="pi pi-lock" *ngIf="index < 3"></i>
+              <p-tableCheckbox [value]="rowData" *ngIf="index > 2" style="cursor: pointer;" />
             </td>
             <td *ngFor="let col of columns" [pEditableColumn]="rowData[col.value]" style=""
               pEditableColumnField="rowData[col.value]"
@@ -77,7 +87,7 @@
         </ng-template>
       </p-table>
       <ng-template #footer>
-        <div style="position: relative;top: 10px;">Convert Table data to colour-coded matrix! => <p-checkbox
+        <div style="position: relative;top: 10px;">Convert Table to colour-coded matrix! => <p-checkbox
             [(ngModel)]="is_heatmap" [binary]="true" (onChange)="on_sel_heatmap_option($event)" />
           <span *ngIf="is_heatmap" style="margin-left: 10px;">Ranges => 1-30 : Green, 31-70 : Orange, >70 : Red </span>
           <span style="float: right;">
@@ -97,14 +107,15 @@
   </div>
   <p-card styleClass="mb-3 card_styling" *ngIf="first_page">
     <ng-template #header>
-      <div><span>Prime NG Charts</span>
-        <span *ngIf="opted_charts && opted_charts.length > 0" style="cursor: pointer;">
+      <div class="heading">
+        <p>Prime NG Charts</p>
+        <div *ngIf="opted_charts && opted_charts.length > 0" style="cursor: pointer;">
           <i class="pi pi-spin pi-cog" style="font-size: 1.5rem" (click)="global_settings_dialog('primeng_main')"></i>
-        </span>
+        </div>
       </div>
     </ng-template>
-    <div style="margin-top: 10px;display: flex;">
-      <span style="display: block;" *ngIf="opted_charts && opted_charts.length > 0">
+    <div class="prime-ng-chart">
+      <div class="ng-con" *ngIf="opted_charts && opted_charts.length > 0">
         @for (chartType of opted_charts; track chartType.value;let i = $index) {
         <!-- *ngFor="let chartType of opted_charts; let i = index" -->
         <div>
@@ -112,46 +123,51 @@
           <!-- *ngIf="chartType?.value === 'bar' || chartType?.value === 'line' || chartType?.value === 'radar'" -->
           <div>
             <!-- <span>{{chartType?.label +' Chart' | uppercase}}</span> -->
-            <span>{{chartType?.label + 'Chart'}}</span>
-            <span *ngIf="opted_charts && opted_charts.length > 0" style="cursor: pointer;">
-              <i class="pi pi-wrench" style="font-size: 1.5rem" (click)="chart.toggle($event)"
-                (click)="chart_settings(chartType)"></i>
-            </span>
+            <div class="label">
+              <p>{{chartType?.label + ' Chart'}}</p>
+              <p *ngIf="opted_charts && opted_charts.length > 0" style="cursor: pointer;">
+                <i class="pi pi-wrench" style="font-size: 1.5rem" (click)="chart.toggle($event)"
+                  (click)="chart_settings(chartType)"></i>
+              </p>
+            </div>
+
             <p-chart [type]="chartType?.value" [data]="primeng_charts_data" height="400px" width="400px"
               style="margin-top: 20px;" [options]="{indexAxis:chartType?.index_axis}"></p-chart>
           </div>
-          }
+          } @else {
+            <div style="">
+              <!-- *ngIf="opted_charts && opted_charts.length > 0 && opted_charts_list?.includes('stacked_bar')" -->
+              <div class="label">
+                <p>Stacked Bar Chart</p>
+              </div>
+              <p-chart type="bar" [data]="primeng_charts_data" style="margin-top: 20px;" height="400px" width="400px"
+                [options]="{scales: {x: {stacked: true}, y: {stacked: true}}, indexAxis: 'x'}"></p-chart>
+            </div>
+            }
         </div>
         }
-      </span>
-      @if(opted_charts && opted_charts.length > 0 && opted_charts_list?.includes('stacked_bar')){
-      <span style="display: block; width: 400px">
-        <!-- *ngIf="opted_charts && opted_charts.length > 0 && opted_charts_list?.includes('stacked_bar')" -->
-        <span>Stacked Bar Chart</span>
-        <p-chart type="bar" [data]="primeng_charts_data" style="margin-top: 20px;" height="400px" width="400px"
-          [options]="{scales: {x: {stacked: true}, y: {stacked: true}}, indexAxis: 'x'}"></p-chart>
-      </span>
-      }
+      </div>
+
     </div>
   </p-card>
   <p-card header="Chart JS Charts" styleClass="mb-3 card_styling" *ngIf="first_page">
     <div style="margin-top: 10px;display: flex;justify-content: space-around;">
-      <span style="display: block; width: 400px" *ngIf="opted_charts_list?.includes('bar')">
-        <span>Bar chart</span>
+      <div class="label" style="display: block; width: 400px" *ngIf="opted_charts_list?.includes('bar')">
+        <p>Bar chart</p>
         <canvas id="bar" height="320">{{ chart }}</canvas>
-      </span>
-      <span style="display: block; width: 400px" *ngIf="opted_charts_list?.includes('line')">
-        <span>Line chart</span>
+      </div>
+      <div class="label" style="display: block; width: 400px" *ngIf="opted_charts_list?.includes('line')">
+        <p>Line chart</p>
         <canvas id="line" height="320">{{ chart }}</canvas>
-      </span>
-      <span style="display: block; width: 400px" *ngIf="opted_charts_list?.includes('stacked_bar')">
-        <span>Stacked bar chart</span>
+      </div>
+      <div class="label" style="display: block; width: 400px" *ngIf="opted_charts_list?.includes('stacked_bar')">
+        <p>Stacked bar chart</p>
         <canvas id="stacked_bar" height="320">{{ chart }}</canvas>
-      </span>
-      <span style="display: block; width: 400px" *ngIf="opted_charts_list?.includes('radar')">
-        <span>Radar chart</span>
+      </div>
+      <div class="label" style="display: block; width: 400px" *ngIf="opted_charts_list?.includes('radar')">
+        <p>Radar chart</p>
         <canvas id="radar" height="320">{{ chart }}</canvas>
-      </span>
+      </div>
     </div>
     <!-- @switch(opted_charts_list) {
       @case(opted_charts_list?.includes('bar')) {
@@ -190,51 +206,56 @@
     </div>
   </p-popover>
   <p-popover #chart [style]="{width: 'auto'}">
-    <div>
-      Index axis :
-      <div *ngFor="let option of index_options" class="field-checkbox">
-        <p-radiobutton name="option.label" [value]="option" [(ngModel)]="opted_index"
-          (onClick)="change_index_axis($event)" />
-        <label class="ml-2">{{ option.label }}</label>
-      </div>
+    <div class="checkboxes-field">
+      <p>Index axis :</p>
+      <span *ngFor="let option of index_options" class="field-checkbox">
+        <span class="axis">
+          <p-radiobutton name="option.label" [value]="option" [(ngModel)]="opted_index"
+            (onClick)="change_index_axis($event)" />
+          <label class="ml-2">{{ option.label }}</label>
+        </span>
+      </span>
     </div>
     <div *ngIf="selected_individual_chart?.label != 'Line' && selected_individual_chart?.label != 'Radar'">
       <label for="bg_color" class="block mb-2">Border Radius:</label>
-      <div>
+      <span>
         @for (data of table_data; track data.label) {
-        <span>{{ data.label }}</span>
-        <p-slider [min]="1" [max]="50" (onChange)="update_indiv_settings($event,data, 'border_radius')"></p-slider><br>
+        <p>{{ data.label }}</p>
+        <p-slider [min]="1" [max]="50" (onChange)="update_indiv_settings($event,data, 'border_radius')"></p-slider>
         } @empty {
-        <span>No items found.</span>
+        <p>No items found.</p>
         }
-      </div>
+      </span>
     </div>
     <div *ngIf="selected_individual_chart?.label == 'Line' || selected_individual_chart?.label == 'Radar'">
       @for (data of table_data; track data.label) {
-      <span>{{ data.label }}</span>
-      <p-toggleswitch (onChange)="update_indiv_settings($event,data, 'fill')" />
+      <p>{{ data.label }} <p-toggleswitch (onChange)="update_indiv_settings($event,data, 'fill')"
+          styleClass="toggle_class" /></p>
       <!-- <p-radiobutton name="Fill" value="fill" [(ngModel)]="" inputId="ingredient1" /> -->
       <p-slider [min]="1" [max]="10" (onChange)="update_indiv_settings($event,data, 'border_width')"></p-slider>
-      <br>
+      <!-- <br> -->
       } @empty {
-      <span>No items found.</span>
+      <p>No items found.</p>
       }
     </div>
   </p-popover>
-  <p-dialog header="Customize" [modal]="true" [(visible)]="show_global_settings" [style]="{ width: '25rem'}">
-    <span class="p-text-secondary block mb-8">Update yolours as you want.</span>
+  <p-dialog header="Customize" [modal]="true" [(visible)]="show_global_settings" draggable="true">
+    <p class="p-text-secondary block mb-8 heading">Update your colours as you want.</p>
     <div class="field">
       <div>
-        <label for="bg_color" class="block mb-2">Background Color:</label>
+        <p><label for="bg_color" class="block mb-2">You can select individual Background Colors :</label></p>
         <!-- <label for="bg_color" class="block mb-2">Border Color:</label> -->
         <div>
           @for (data of table_data; track data.label) {
-          <span>{{ data.label }}</span>
-          <p-colorpicker [(ngModel)]="defalt_color" (onChange)="update_global_settings($event,data, 'bg_color')" />
+          <div class="color-picker">
+            <p>Year =>{{ data.label }} : </p>
+            <p-colorpicker [(ngModel)]="defalt_color" (onChange)="update_global_settings($event,data, 'bg_color')" />
+          </div>
+
           <!-- <p-slider [min]="1" [max]="10" (onChange)="update_global_settings($event,data, 'border_width')"></p-slider> -->
-          <br>
+
           } @empty {
-          <span>No items found.</span>
+          <p>No items found.</p>
           }
         </div>
       </div>
@@ -242,7 +263,7 @@
 
   </p-dialog>
   <p-dialog header="Conformation" [modal]="true" [(visible)]="show_conform_dialog" styleClass="del_dia">
-    <span class="p-text-secondary block mb-8">Are you sure that you want to proceed?</span>
+    <p class="p-text-secondary block mb-8">Are you sure that you want to proceed?</p>
     <div class="flex justify-end gap-2">
       <p-button (click)="confirm_del('cancel')" label="Cancel" [outlined]="true" />
       <p-button (click)="confirm_del('delete')" label="Delete" severity="danger" [outlined]="true" />
@@ -252,19 +273,21 @@
 
   <!-- //Code related to Second Page -->
   <div *ngIf="!first_page">
-    <div>Please Select any option to compare data :
-      <span *ngFor="let option of compareData_options" class="field-checkbox" style="margin-left: 10px;">
-        <p-radiobutton name="option.label" [value]="option" [(ngModel)]="opted_option"
-          (onClick)="on_click_radio_button($event)" />
-        <label class="ml-2">{{ option.label }}</label>
-      </span>
+    <div class="compare-data">
+      <p>Please select any option to compare data :
+        <span *ngFor="let option of compareData_options" class="field-checkbox" class="checkbox-box">
+          <p-radiobutton name="option.label" [value]="option" [(ngModel)]="opted_option"
+            (onClick)="on_click_radio_button($event)" />
+          <label class="ml-2">{{ option.label }}</label>
+        </span>
+      </p>
     </div>
-    <div>
-      Select brands to compare :
+    <span class="select-brands">
+      <p>Select brands to compare : </p>
       <p-multiSelect [options]="opted_option?.label == 'By Country' ? countries_list : brands_list"
         [(ngModel)]="selected_options" [selectionLimit]="5" optionLabel="label" placeholder="Select Years"
         class="w-full md:w-30" (onChange)="on_change_brandss($event)" />
-    </div>
+    </span>
     <p-card>
       <div class="graphs_styling">
         @for (charts of selected_options; track charts.label;let i = $index) {
@@ -281,8 +304,7 @@
 </div>
 <div *ngIf="!loader; else showLoader"></div>
 <ng-template #showLoader>
-    <div class="loading-bar loading-bar-fullpage flex align-items-center justify-content-center">
-        <img src="/assets/Walk.gif" alt="" height="80">
-
-    </div>
+  <div class="loading-bar loading-bar-fullpage flex align-items-center justify-content-center">
+    <img src="/assets/Walk.gif" alt="" height="80">
+  </div>
 </ng-template>

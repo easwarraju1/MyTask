@@ -1,2 +1,116 @@
 /* You can add global styles to this file, and also import other style files */
 @import "primeicons/primeicons.css";
+
+body,div,span,p{
+    line-height: 1.2em;
+    font-family: "Roboto", sans-serif;
+}
+.first-page-sec {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.card-container {
+    display: flex;
+    justify-content: space-between;
+}
+.note {
+    font-size: 18px;
+    font-weight: 500;
+    color: #f25f5c;
+    padding-right: 20px;
+}
+.ng-con.ng-star-inserted {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.label {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.label p {
+    font-weight: 600;
+}
+i.pi.pi-wrench {
+    font-size: 18px !important;
+}
+.prime-ng-chart .ng-con{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.heading {
+    font-size: 1.2rem;
+    font-weight: 500;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 11px;
+}
+.select-record{
+    color: #f25f5c;
+    font-weight: 500;
+}
+.select-record p{
+    margin-top: 0;
+}
+.p-card-body{
+    padding:0 !important;
+}
+p-card,.compare-data{
+    padding: 20px !important;
+    margin: 30px;
+    margin-top: 0 !important;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px !important;
+    border-radius: 6px;
+    box-shadow: 0 3.2px 6px #1e466433 !important;
+    background: #ffffff;
+}
+.color-picker {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 0px 12px;
+    margin-bottom: 5px;
+}
+i.pi.pi-forward , i.pi.pi-backward {
+    border: 2px solid #000;
+    padding: 10px;
+    border-radius: 6px;
+}
+.checkbox-box {
+    margin: 10px;
+}
+.checkbox-box label{
+    margin-left: 5px;
+}
+.select-brands, .select-brands p {
+    display: inline-block;
+}
+.select-brands{
+    padding: 0px !important;
+    margin-top: 0 !important;
+    margin: 30px;
+}
+.field-checkbox {
+    // margin: 5px 0;
+    margin: 12px 6px;
+    position: relative;
+    bottom: 9px;
+}
+.p-radiobutton {
+    margin-right: 5px;
+}
+.ng-trigger.ng-trigger-animation.ng-tns-c2233238516-52.p-component.p-popover.ng-star-inserted.p-popover-flipped {
+    width: 100% !important;
+}
+:host ::ng-deep .toggle_class .p-toggleswitch {
+    position: relative;
+    top: 6px;
+}
