@@ -61,6 +61,7 @@ export class ChartsPageComponent {
   duplicate_table_data: any = [];
   uploaded_file: boolean = false;
   loader: boolean = false;
+  primeng_lines_charts_data: any;
   constructor(private messageService: MessageService) { }
   brightness: any = [40, 120]
   defalt_color: any = '#dadced';
@@ -134,7 +135,7 @@ export class ChartsPageComponent {
           bg_color: 'skyblue',//'var(--p-cyan-100)',
           border_color: 'skyblue',//'var(--p-cyan-100)',
           border_radius: 5,
-          label: 'Germany',
+          label: '2021',
           chartjs_bg_color: 'green',
           chartjs_border_color: 'green',
           fill: false,
@@ -152,7 +153,7 @@ export class ChartsPageComponent {
           bg_color: 'orange',//'var(--p-orange-100)',
           border_color: 'orange',//'var(--p-orange-100)',
           border_radius: 10,
-          label: 'Spain',
+          label: '2022',
           fill: false,
           chartjs_bg_color: 'yellow',
           chartjs_border_color: 'yellow',
@@ -169,7 +170,7 @@ export class ChartsPageComponent {
           bg_color: 'yellow',//'var(--p-orange-100)',
           border_color: 'yellow',//'var(--p-orange-100)',
           border_radius: 10,
-          label: 'France',
+          label: '2023',
           fill: false,
           chartjs_bg_color: 'orange',
           chartjs_border_color: 'orange',
@@ -187,20 +188,42 @@ export class ChartsPageComponent {
   construct_charts_data(chart_type?: any) {
     console.log('constructing chart data...', this.table_headers, this.table_data, this.opted_charts,this.opted_charts_list);
     const labels = this.table_headers.slice(1).map((header: any) => header?.label);
-    const datasets = this.table_data.map((product: any) => ({
-      label: product.label,
-      backgroundColor: product?.fill === true && (this.opted_charts_list?.includes('line') ||this.opted_charts_list?.includes('radar')) ? 'rgba(107, 114, 128, 0.2)' : product?.bg_color,//getComputedStyle(document.documentElement).getPropertyValue('var(--p-cyan-100)'),
-      borderColor: product.border_color,//getComputedStyle(document.documentElement).getPropertyValue(product.border_color),
-      data: this.table_headers.slice(1).map((header: any) => product[header.value]),
-      borderWidth: product?.border_width,//1,
-      borderRadius: product?.border_radius, //5,
-      fill: this.opted_charts_list?.includes('line') ||this.opted_charts_list?.includes('radar')?product?.fill : '',
-      // borderDash: [10, 10], 
-      tension: 0.1,
-    }));
+    let datasets : any
+    let lines_data_set :any
+    this.opted_charts.forEach((ele:any) => {
+      if(ele?.label != 'Line' && ele?.label != 'Radar') {
+        datasets = this.table_data.map((product: any) => ({
+          label: product.label,
+          backgroundColor: product?.bg_color,//getComputedStyle(document.documentElement).getPropertyValue('var(--p-cyan-100)'),
+          borderColor: product.border_color,//getComputedStyle(document.documentElement).getPropertyValue(product.border_color),
+          data: this.table_headers.slice(1).map((header: any) => product[header.value]),
+          borderWidth: product?.border_width,//1,
+          borderRadius: product?.border_radius, //5,
+          fill: false,
+          // borderDash: [10, 10], 
+          tension: 0.1,
+        }));
+      } else {
+        lines_data_set = this.table_data.map((product: any) => ({
+          label: product.label,
+          backgroundColor: product?.fill === true ? 'rgba(107, 114, 128, 0.2)' : product?.bg_color,//getComputedStyle(document.documentElement).getPropertyValue('var(--p-cyan-100)'),
+          borderColor: product.border_color,//getComputedStyle(document.documentElement).getPropertyValue(product.border_color),
+          data: this.table_headers.slice(1).map((header: any) => product[header.value]),
+          borderWidth: product?.border_width,//1,
+          borderRadius: product?.border_radius, //5,
+          fill: product?.fill,
+          // borderDash: [10, 10], 
+          tension: 0.1,
+        }));
+      }
+    });
     this.primeng_charts_data = {
       labels: labels,
       datasets: datasets
+    };
+    this.primeng_lines_charts_data = {
+      labels: labels,
+      datasets: lines_data_set
     };
     console.log(this.primeng_charts_data);
   }

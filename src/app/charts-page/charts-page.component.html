@@ -92,13 +92,13 @@
           <span *ngIf="is_heatmap" style="margin-left: 10px;">Ranges => 1-30 : Green, 31-70 : Orange, >70 : Red </span>
           <span style="float: right;">
             <span *ngIf="selected_records?.length > 0">
-              <p-button label="Delete Selected" (click)="add_new('del')" />
+              <p-button label="Delete Selected" (click)="add_new('del')" [disabled]="uploaded_file"/>
             </span>
             <span style="margin-left: 10px;">
-              <p-button label="Add Row" (click)="add_new('row')" />
+              <p-button label="Add Row" (click)="add_new('row')" [disabled]="uploaded_file"/>
             </span>
             <span style="margin-left: 10px;">
-              <p-button label="Add Column" (click)="add_new('column')" />
+              <p-button label="Add Column" (click)="add_new('column')" [disabled]="uploaded_file"/>
             </span>
           </span>
         </div>
@@ -119,7 +119,7 @@
         @for (chartType of opted_charts; track chartType.value;let i = $index) {
         <!-- *ngFor="let chartType of opted_charts; let i = index" -->
         <div>
-          @if(chartType?.value === 'bar' || chartType?.value === 'line' || chartType?.value === 'radar'){
+          @if(chartType?.value === 'bar'){
           <!-- *ngIf="chartType?.value === 'bar' || chartType?.value === 'line' || chartType?.value === 'radar'" -->
           <div>
             <!-- <span>{{chartType?.label +' Chart' | uppercase}}</span> -->
@@ -134,6 +134,19 @@
             <p-chart [type]="chartType?.value" [data]="primeng_charts_data" height="400px" width="400px"
               style="margin-top: 20px;" [options]="{indexAxis:chartType?.index_axis}"></p-chart>
           </div>
+          } @else if(chartType?.value === 'line' || chartType?.value === 'radar') {
+            <div>
+              <div class="label">
+                <p>{{chartType?.label + ' Chart'}}</p>
+                <p *ngIf="opted_charts && opted_charts.length > 0" style="cursor: pointer;">
+                  <i class="pi pi-wrench" style="font-size: 1.5rem" (click)="chart.toggle($event)"
+                    (click)="chart_settings(chartType)"></i>
+                </p>
+              </div>
+  
+              <p-chart [type]="chartType?.value" [data]="primeng_lines_charts_data" height="400px" width="400px"
+                style="margin-top: 20px;" [options]="{indexAxis:chartType?.index_axis}"></p-chart>
+            </div>
           } @else {
             <div style="">
               <!-- *ngIf="opted_charts && opted_charts.length > 0 && opted_charts_list?.includes('stacked_bar')" -->
@@ -264,9 +277,13 @@
   </p-dialog>
   <p-dialog header="Conformation" [modal]="true" [(visible)]="show_conform_dialog" styleClass="del_dia">
     <p class="p-text-secondary block mb-8">Are you sure that you want to proceed?</p>
-    <div class="flex justify-end gap-2">
-      <p-button (click)="confirm_del('cancel')" label="Cancel" [outlined]="true" />
-      <p-button (click)="confirm_del('delete')" label="Delete" severity="danger" [outlined]="true" />
+    <div class="flex justify-end gap-2" style="margin-left: 10px;">
+      <span style="margin-right: 10px;">
+        <p-button (click)="confirm_del('cancel')" label="Cancel" [outlined]="true" />
+      </span>
+      <span style="margin-left: 10px;">
+        <p-button (click)="confirm_del('delete')" label="Delete" severity="danger" [outlined]="true" />
+      </span>
     </div>
   </p-dialog>
 
